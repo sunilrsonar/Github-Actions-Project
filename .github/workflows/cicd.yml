@@ -75,7 +75,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build project 
-        run: mvn packaage
+        run: mvn package
 
       - name: Checking out
         uses: actions/checkout@v4
