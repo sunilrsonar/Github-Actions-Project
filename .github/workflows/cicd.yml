@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Install git
         run: sudo apt install git -y
-      - name: Install unzip
-        run: sudo apt install unzip -y
       - name: checkout code
         uses: actions/checkout@v4
       - name: maven Installation
@@ -68,6 +66,8 @@ jobs:
     needs: test
 
     steps:
+      - name: Install unzip
+        run: sudo apt install unzip -y
       - name: checkout code
         uses: actions/checkout@v4
       - name: set up JDK 17
@@ -78,6 +78,10 @@ jobs:
           cache: maven
       - name: Build project 
         run: mvn package
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app.jar
 
       - name: Checking out
         uses: actions/checkout@v4
@@ -89,6 +93,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }} 
+          #squ_98176c1a020b5cb62d4d8898dc81304761979c0f
 
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check 
@@ -98,3 +103,29 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+
+  build_docker_image_and push:
+    runs-on: self-hosted
+    needs: build_project_and_sonar_scanner
+
+    steps:
+      - name: dowload JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jar
+          path: app 
+      - name: Install Docker
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ca-certificates curl gnupg
+          sudo install -m 0755 -d /etc/apt/keyrings
+          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          sudo chmod a+r /etc/apt/keyrings/docker.asc
+          echo \
+            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+            $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update -y
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+          sudo usermod -aG docker $USER
+          newgrp docker
