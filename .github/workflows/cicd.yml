@@ -82,6 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app.jar
+          path: target/*.jar
 
       - name: Checking out
         uses: actions/checkout@v4
@@ -113,7 +114,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-jar
-          path: ~/app
+          path: app
       - name: Install Docker
         run: |
           sudo apt-get update
