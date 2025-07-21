@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Install git
         run: sudo apt install git -y
+      - name: Install unzip
+        run: sudo apt install unzip -y
       - name: checkout code
         uses: actions/checkout@v4
       - name: maven Installation
