@@ -9,8 +9,12 @@ jobs:
   compile:
     runs-on: self-hosted
     steps:
+      - name: Install git
+        run: sudo apt install git -y
       - name: checkout code
         uses: actions/checkout@v4
+      - name: maven Installation
+        run: sudo apt install maven -y
       - name: Set up Maven
         uses: actions/setup-java@v4
         with:
