@@ -90,7 +90,7 @@ jobs:
 
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check 
-        uses: SonarSource/sonarqube-quality-gate-action@v2.0.0
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         with:
           pollingTimeoutsec: 600
         env:
