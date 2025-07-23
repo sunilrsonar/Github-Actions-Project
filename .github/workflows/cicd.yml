@@ -110,7 +110,7 @@ jobs:
     needs: build_project_and_sonar_scanner
 
     steps:
-      - name: dowload JAR artifact
+      - name: download JAR artifact
         uses: actions/download-artifact@v4
         with:
           name: app.jar
@@ -130,3 +130,4 @@ jobs:
         with:
           push: true
           tags: sunilrsonar/bankapp:latest
+          file: ./Dockerfile
